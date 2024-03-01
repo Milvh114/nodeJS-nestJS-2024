@@ -24,7 +24,11 @@ model User {
   // dấu hỏi có nghĩa là có thể bỏ trống
   firstName String?
   lastName  String?
-  fullName String
+
+  Bookmark Bookmark[]
+
+  //rename table
+  @@map("users")
 }
 
 model Bookmark {
@@ -35,4 +39,9 @@ model Bookmark {
   title       String
   description String?
   link        String
+
+  userId Int //primary key
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("bookmarks")
 }
