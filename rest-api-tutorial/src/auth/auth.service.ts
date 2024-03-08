@@ -15,7 +15,7 @@ export class AuthService {
     private config: ConfigService
   ) { }
 
-  async signup(dto: AuthDto): Promise<string> {
+  async signup(dto: AuthDto): Promise<{}> {
     try {
       // generate pass to hashpass
       const hash = await argon2.hash(dto.password);
@@ -28,7 +28,7 @@ export class AuthService {
           // firstName:'Alice',
           // lastName:'minh'
         },
-        // select: { // selcet can help you display fields u want respon to client
+        // select: { // selcet can help you display fields u want response to client
         //   email:true,
         //   firstName:true,
         //   lastName:true
@@ -50,7 +50,7 @@ export class AuthService {
     }
   }
 
-  async signin(dto: AuthDto): Promise<string> {
+  async signin(dto: AuthDto): Promise<{}> {
     
     //find you by email
     const user = await this.prisma.user.findUnique({
@@ -74,18 +74,19 @@ export class AuthService {
     }
 
     // delete user.hash
-    return this.signToken(user.id, user.email); // when we return in async function, we dont need put 'async' in signToken function
+    return this.signToken(user.id, user.email); // when we return in async function, we dont need put 'async' in signToken function && we dont need use 'await' in this line because this is async function so it alway return promise 
   }
 
-  signToken(userId:number, email: string): Promise<string> {
+  async signToken(userId:number, email: string): Promise<{acess_token: string}> {//  we dont need put 'async' in signToken function bcs we dont use 'await' in this function but we  use promise<string> code will know this is promise
     const payload = {
-      sub: userId,
+      sub: userId, // we choose a property name of 'sub' to hold our 'userId' value to be consistent with JWT standards.
       email
     }
-    const secret = this.config.get('JWT_SECRET')
-    return this.jwt.signAsync(payload, {
-      expiresIn: '15m', //this mean give that token to user, the user can do some action on our platform for 15 minute after that the user need sign in again
+    const secret = await this.config.get('JWT_SECRET')
+    const token = await this.jwt.signAsync(payload, { //a signAsync() function to generate our JWT from a subset of the user object properties, which we then return as a simple object with a single access_token property.
+      expiresIn: '60m', //this mean give that token to user, the user can do some action on our platform for 15 minute after that the user need sign in again
       secret: secret
     })
+    return { acess_token: token}
   }
 }
