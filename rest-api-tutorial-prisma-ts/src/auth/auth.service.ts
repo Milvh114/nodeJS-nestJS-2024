@@ -37,7 +37,7 @@ export class AuthService {
       //delete the field you dont want to show for client in respon
       // delete user.hash;
       // return the save user
-      return this.signToken(user.id, user.email);// when we return in async function, we dont need put 'async' in signToken function
+      return this.signToken(user.id, user.email);// when we return in async function, we dont need put 'await'
     } catch (error) {
       console.log(error.code)
       if(error instanceof PrismaClientKnownRequestError){
@@ -46,7 +46,6 @@ export class AuthService {
         }
       }
       throw error // throw error not come from prisma
-      // return { msg: `duplicate email: ${error}`};
     }
   }
 

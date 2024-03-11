@@ -1,0 +1,13 @@
+version: '3.8'
+services:
+  dev-db-mysql:
+    image: mysql
+    env_file:
+      - '.env'
+    ports:
+      - '3306:3306'
+    # environment:
+    #   POSTGRES_USER: postgres
+    #   POSTGRES_PASSWORD: 123
+    #   POSTGRES_DB: nest
+    
