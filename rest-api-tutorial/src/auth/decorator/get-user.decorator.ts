@@ -8,3 +8,17 @@ export const GetUser = createParamDecorator(
     return request.user;
   },
 );
+
+export const GetUserEmail = createParamDecorator(
+  (data: string | undefined, ctx: ExecutionContext) => { 
+    const request: Express.Request = ctx.switchToHttp().getRequest(); 
+
+    // if have something in data we return request.user[data] instead request.user.data 
+     // Example: if we call @GetUserId('email'). Now we already transmisson argument 'email' to decorator GetUserId now data return will be request.user.email
+     // Otherwise, if we dont put any argument to this decorator this decorator will return user object(return all field of user)
+    if(data){
+      return request.user[data]
+    }
+    return request.user;
+  },
+);

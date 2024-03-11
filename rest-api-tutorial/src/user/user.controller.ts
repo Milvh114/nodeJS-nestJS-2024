@@ -2,7 +2,7 @@ import { Controller, Get, Patch, Req, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { User } from '@prisma/client';
 import { Request } from 'express';
-import { GetUser } from 'src/auth/decorator';
+import { GetUser, GetUserEmail } from 'src/auth/decorator';
 import { JwtGuard } from 'src/auth/guard';
 
 @UseGuards(JwtGuard) // u can move guard to controller for optimize code/logic 
@@ -24,6 +24,11 @@ export class UserController {
     @Get('me')
     getProfile(@GetUser() user: User){ // type User come from prisma user's model
         return user
+    }
+
+    @Get('me/email')
+    getMyEmail(@GetUserEmail('email') email: string){ 
+        return email
     }
 
     @Patch()

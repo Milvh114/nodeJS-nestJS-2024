@@ -1,4 +1,4 @@
-import { Body, Controller, Get, ParseIntPipe, Post, Put, Req } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, ParseIntPipe, Post, Put, Req } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { Request } from 'express';
 import { AuthDto } from './dto/index';
@@ -8,11 +8,15 @@ export class AuthController {
 
     constructor(private authService: AuthService){}
 
+    // Usually, when u create something new the HTTP status will return code (201 created) but u can make it return status code (200 OK)
+    @HttpCode(HttpStatus.OK)
     @Post('signup')
     signup(@Body() dto: AuthDto){
         console.log(dto)
         return this.authService.signup(dto)
     }
+
+    @HttpCode(HttpStatus.OK)
     @Post('signin')
     signin(@Body() dto: AuthDto){
         

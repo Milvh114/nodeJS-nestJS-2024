@@ -50,6 +50,7 @@ export class AuthService {
     }
   }
 
+
   async signin(dto: AuthDto): Promise<{}> {
     
     //find you by email
@@ -76,6 +77,7 @@ export class AuthService {
     // delete user.hash
     return this.signToken(user.id, user.email); // when we return in async function, we dont need put 'async' in signToken function && we dont need use 'await' in this line because this is async function so it alway return promise 
   }
+  
 
   async signToken(userId:number, email: string): Promise<{acess_token: string}> {//  we dont need put 'async' in signToken function bcs we dont use 'await' in this function but we  use promise<string> code will know this is promise
     const payload = {
