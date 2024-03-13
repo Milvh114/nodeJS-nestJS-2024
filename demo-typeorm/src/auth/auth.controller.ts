@@ -21,14 +21,14 @@ export class AuthController {
   }
 
   @HttpCode(HttpStatus.OK)
-  @Post('forgot-pass/:id')
-  forgotPass(@Param('id') id: string,) {
-    return this.authService.forgotPass(id);
+  @Post('forgot-pass')
+  forgotPass(@Body('email') email: string, @Body('newPass') newPass: string) {
+    return this.authService.forgotPass(email, newPass);
   }
 
   @HttpCode(HttpStatus.OK)
   @Put('change-pass/:id')
-  changePass(@Param('id') id: string,) {
+  changePass(@Param('id') id: string) {
     return this.authService.changePass(id);
   }
 

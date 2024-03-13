@@ -5,66 +5,84 @@ import * as dto from './dto/index'
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import * as argon2 from 'argon2';
+import { UserService } from 'src/user/user.service';
+import { InjectRepository } from '@nestjs/typeorm';
+import { User } from 'src/user/entities/user.entity';
+import { Repository } from 'typeorm';
 
 
 @Injectable()
 export class AuthService {
   constructor(
     private jwt: JwtService,
-    private config: ConfigService
+    private config: ConfigService,
+    private userService: UserService,
+    @InjectRepository(User)
+    private userRepo: Repository<User>
   ) {}
 
-  async signup(dto: dto.AuthDto): Promise<{}> {
+  async signup(authDto: dto.AuthDto): Promise<{}> {
     try {
       // generate pass to hashpass
-      const hash = await argon2.hash(dto.password);
+      const hash = await argon2.hash(authDto.password);
 
       //save the new user in the db
-      const user = await this.prisma.user.create({
-        data: {
-          email: dto.email,
-          hash,
-        },
-      });
+      authDto.password = hash
+      const user = await this.userService.create(authDto)
+      console.log(user.id)
       return this.signToken(user.id, user.email);
     } catch (error) {
       throw error 
     }
+    return {}
   }
 
-  async signin(dto: dto.AuthDto): Promise<{}> {
+  async signin(authDto: dto.AuthDto): Promise<{}> {
     
     //find you by email
-    const user = await this.prisma.user.findUnique({
-      where:{
-        email: dto.email,
-        // hash 
-      }
-    })
-
+    const user = await this.userService.findByEmail(authDto.email)
     // if user do not exist throw exception
-    if(!user){
-      throw new ForbiddenException('email do not exist')
-    }
+    // if(!user){
+    //   throw new ForbiddenException('email do not exist')
+    // }
 
     //compare password
-    const passMatches = await argon2.verify(user.hash, dto.password)
+    const passMatches = await argon2.verify(user.pass, authDto.password)
 
     //if pass incorrect throw exception
     if(!passMatches){
       throw new ForbiddenException('password not correct')
     }
 
-    // delete user.hash
-    return this.signToken(user.id, user.email); // when we return in async function, we dont need put 'async' in signToken function && we dont need use 'await' in this line because this is async function so it alway return promise 
+    return this.signToken(user.id, user.email)
   }
 
-  forgotPass(id: string) {
-    return `This action returns a #${id} auth`;
+  async forgotPass(email: string, newPass: string) {
+    //find user
+    const user = await this.userService.findByEmail(email)
+    console.log(user)
+    //if user not exist
+    if(!user){
+      throw new ForbiddenException('email not exist')
+    }
+    // hash new pass
+    const hash = await argon2.hash(newPass);
+    //change new pass to authDTO
+    // authDto.password = hash
+    // update user pass
+    user.pass = hash
+    this.userRepo.save(user)
+    return user;
   }
 
-  changePass(id: string) {
-    return `This action updates a #${id} auth`;
+  changePass(pass: string) {
+        // //check old pass
+    // const passMatches = await argon2.verify(user.pass, authDto.password)
+       //if pass incorrect throw exception
+      //  if(!passMatches){
+      //   throw new ForbiddenException('password not correct')
+      // }
+    return `This action updates a # auth`;
   }
 
   async signToken(userId:number, email: string): Promise<{acess_token: string}> {

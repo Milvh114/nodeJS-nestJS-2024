@@ -22,14 +22,15 @@ export class AuthController {
         
         return this.authService.signin(dto)
     }
-    // @Post('signin')
-    // signin(@Body('email') email: string, @Body('pass', ParseIntPipe) pass: string){
-    //     console.log({
-    //         email,
-    //         pass,
-    //         typeemail: typeof email,
-    //         typepass: typeof pass
-    //     })
-    //     return this.authService.signin()
-    // }
+
+    @Post('signin2')
+    signin2(@Body('email') email: string, @Body('pass', ParseIntPipe) pass: string){
+        console.log({
+            email,
+            pass,
+            typeemail: typeof email,
+            typepass: typeof pass
+        })
+        return {}
+    }
 }
