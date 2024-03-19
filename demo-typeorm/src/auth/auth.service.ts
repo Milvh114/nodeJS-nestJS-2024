@@ -6,9 +6,9 @@ import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import * as argon2 from 'argon2';
 import { UserService } from 'src/user/user.service';
-import { InjectRepository } from '@nestjs/typeorm';
+import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/user/entities/user.entity';
-import { Repository } from 'typeorm';
+import { EntityManager, Repository } from 'typeorm';
 
 
 @Injectable()
@@ -18,7 +18,9 @@ export class AuthService {
     private config: ConfigService,
     private userService: UserService,
     @InjectRepository(User)
-    private userRepo: Repository<User>
+    private userRepo: Repository<User>,
+    @InjectEntityManager()
+    private entityManager: EntityManager
   ) {}
 
   async signup(authDto: dto.AuthDto): Promise<{}> {
@@ -41,10 +43,7 @@ export class AuthService {
     
     //find you by email
     const user = await this.userService.findByEmail(authDto.email)
-    // if user do not exist throw exception
-    // if(!user){
-    //   throw new ForbiddenException('email do not exist')
-    // }
+
 
     //compare password
     const passMatches = await argon2.verify(user.pass, authDto.password)
@@ -57,32 +56,43 @@ export class AuthService {
     return this.signToken(user.id, user.email)
   }
 
-  async forgotPass(email: string, newPass: string) {
+  async forgotPass(email: string): Promise<{}> {
     //find user
     const user = await this.userService.findByEmail(email)
-    console.log(user)
     //if user not exist
     if(!user){
       throw new ForbiddenException('email not exist')
     }
+    
+    const token = Math.random().toString(20).substring(2,12)
+
+    return {token, mail: user.email};
+  }
+
+  async resetPass(newPass:string, mail: string){
+    //find user
+    const user = await this.userService.findByEmail(mail)
     // hash new pass
     const hash = await argon2.hash(newPass);
-    //change new pass to authDTO
-    // authDto.password = hash
-    // update user pass
     user.pass = hash
-    this.userRepo.save(user)
+    await this.userService.save(user)
     return user;
   }
 
-  changePass(pass: string) {
-        // //check old pass
-    // const passMatches = await argon2.verify(user.pass, authDto.password)
-       //if pass incorrect throw exception
-      //  if(!passMatches){
-      //   throw new ForbiddenException('password not correct')
-      // }
-    return `This action updates a # auth`;
+  async changePass(oldPass: string, newPass:string, id: number) {
+    //find user
+    const user = await this.userService.findOne(id)
+    //check old pass
+    const passMatches = await argon2.verify(user.password, oldPass)
+    //if pass incorrect throw exception
+    if(!passMatches){
+      throw new ForbiddenException('password not correct')
+    }
+    //hash new pass
+    const newHash = await argon2.hash(newPass);
+    user.password = newHash
+    await this.entityManager.save(user)
+    return this.userService.entityToAuthDto(user);
   }
 
   async signToken(userId:number, email: string): Promise<{acess_token: string}> {

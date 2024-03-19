@@ -56,13 +56,35 @@ export class UserService {
     await this.userRepo.save(oldDto)
     return oldDto;
   }
+
+  async save(userDto: UserDto): Promise<UserDto> {
+    const user = await this.userRepo.findOne({
+      where:{
+        email: userDto.email
+      }
+    })
+    user.email = userDto.email
+    user.fullname = userDto.fullName
+    user.id = userDto.id
+    user.password = userDto.pass
+    await this.userRepo.save(user)
+    return userDto;
+  }
   
   findAll() {
     return `This action returns all user`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findOne(id: number): Promise<User> {
+    const user = await this.userRepo.findOne({
+      where:{
+        id
+      }
+    })
+    if(!user){
+      throw new ForbiddenException("user not exist")
+    }
+    return user;
   }
   
   remove(id: number) {
