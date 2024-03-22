@@ -9,6 +9,8 @@ import { UserService } from 'src/user/user.service';
 import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/user/entities/user.entity';
 import { EntityManager, Repository } from 'typeorm';
+import { PasswordToken } from './entities/password-token.entity';
+import { privateDecrypt } from 'crypto';
 
 
 @Injectable()
@@ -20,7 +22,9 @@ export class AuthService {
     @InjectRepository(User)
     private userRepo: Repository<User>,
     @InjectEntityManager()
-    private entityManager: EntityManager
+    private entityManager: EntityManager,
+    @InjectRepository(PasswordToken)
+    private tokenRepo: Repository<PasswordToken>
   ) {}
 
   async signup(authDto: dto.AuthDto): Promise<{}> {
@@ -63,19 +67,68 @@ export class AuthService {
     if(!user){
       throw new ForbiddenException('email not exist')
     }
-    
-    const token = Math.random().toString(20).substring(2,12)
 
-    return {token, mail: user.email};
+    let data = await this.tokenRepo.findOne({
+      where:{
+        email: user.email
+      }
+    })
+    delete data.createdAt
+    delete data.updatedAt
+    if(!data){
+      const token = Math.random().toString(20).substring(2,12)
+      const expiredAt = new Date()
+      expiredAt.setHours(expiredAt.getUTCHours(), expiredAt.getUTCMinutes() + 5)
+      data = await this.tokenRepo.create({
+        email: user.email,
+        token,
+        expiredAt,
+        userId: user.id
+      })
+      await this.tokenRepo.save(data)
+      return data;
+    }else{ // neu ton tai token
+      const time = new Date()
+      time.setHours(time.getUTCHours(), time.getUTCMinutes())
+      // no expire
+      if(data.expiredAt < time){
+        const token = Math.random().toString(20).substring(2,12)
+        const expiredAt = new Date()
+        expiredAt.setHours(expiredAt.getUTCHours(), expiredAt.getUTCMinutes() + 5)
+        data.token = token
+        data.expiredAt = expiredAt
+        await this.tokenRepo.save(data)
+        delete data.updatedAt
+        return data
+      }else{
+        return data
+      }
+    }
+    
+    
   }
 
-  async resetPass(newPass:string, mail: string){
+  async resetPass(newPass:string, mail: string, token: string){
     //find user
     const user = await this.userService.findByEmail(mail)
+    if(!user){
+      throw new ForbiddenException('email not exist')
+    }
+    //check token
+    const check = await this.tokenRepo.findOne({
+      where:{
+        email: user.email
+      }
+    })
+    if(check.token !== token){
+        throw new ForbiddenException('incorrect token')
+    }
     // hash new pass
     const hash = await argon2.hash(newPass);
     user.pass = hash
     await this.userService.save(user)
+    //delete token 
+    await this.tokenRepo.delete({email: user.email})
     return user;
   }
 
@@ -95,7 +148,7 @@ export class AuthService {
     return this.userService.entityToAuthDto(user);
   }
 
-  async signToken(userId:number, email: string): Promise<{acess_token: string}> {
+  async signToken(userId:number, email: string): Promise<{access_token: string}> {
     const payload = {
       sub: userId, 
       email
@@ -105,7 +158,7 @@ export class AuthService {
       expiresIn: '60m', 
       secret: secret
     })
-    return { acess_token: token}
+    return { access_token: token}
   }
 
 

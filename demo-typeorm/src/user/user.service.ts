@@ -70,10 +70,6 @@ export class UserService {
     await this.userRepo.save(user)
     return userDto;
   }
-  
-  findAll() {
-    return `This action returns all user`;
-  }
 
   async findOne(id: number): Promise<User> {
     const user = await this.userRepo.findOne({

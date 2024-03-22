@@ -35,11 +35,11 @@ export class AuthController {
 
   @HttpCode(HttpStatus.OK)
   @Post('reset-pass')
-  resetPass(@Body('email') email: string, @Body('newPass') newPass: string, @Body('newPass_confirm') newPass_confirm) {
+  resetPass(@Body('email') email: string, @Body('newPass') newPass: string, @Body('newPass_confirm') newPass_confirm, @Body('token') token: string) {
     if(newPass !== newPass_confirm){
       throw new ForbiddenException('wrong confirm password')
     }
-    return this.authService.resetPass(newPass, email);
+    return this.authService.resetPass(newPass, email, token);
   }
 
   @UseGuards(JwtGuard)
