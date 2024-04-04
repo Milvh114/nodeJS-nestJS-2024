@@ -1,0 +1,32 @@
+version: '3.8'
+services:
+  app:
+    build: 
+    networks:
+      - cache-network
+      - db-network
+  dev-db-mysql:
+    image: mysql
+    env_file:
+      - '.env'
+    ports:
+      - '3306:3306'
+    expose:
+      - 3306
+    networks:
+      - db-network
+  cache-redis:
+    image: redis:alpine
+    restart: always
+    ports:
+      - 6379:6379
+    volumes:
+      - new_redis_data_container:/data
+    networks:
+      - cache-network
+  networks:
+    cache-network:
+      driver: bridge
+    db-network:
+      driver: bridge
+
