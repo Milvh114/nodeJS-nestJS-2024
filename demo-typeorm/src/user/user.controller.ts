@@ -19,7 +19,7 @@ export class UserController {
   @UseGuards(JwtGuard)
   @Get('me')
   getProfile(@Req() req: CustomRequest){ 
-    const user: User = req.user as  User
+    const user: User = req.user
     console.log(user)
     return user
   }

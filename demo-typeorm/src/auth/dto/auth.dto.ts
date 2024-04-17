@@ -10,10 +10,10 @@ export class AuthDto {
     password: string
 
     @IsString()
-    @IsOptional()
+    @IsOptional()// can null
     fullName: string
 
     @IsString()
-    @IsOptional()
+    @IsOptional()// can null
     description: string
 }

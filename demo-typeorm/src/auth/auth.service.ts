@@ -73,9 +73,10 @@ export class AuthService {
         email: user.email
       }
     })
-    delete data.createdAt
-    delete data.updatedAt
+    console.log(data)
+
     if(!data){
+      console.log('fuck')
       const token = Math.random().toString(20).substring(2,12)
       const expiredAt = new Date()
       expiredAt.setHours(expiredAt.getUTCHours(), expiredAt.getUTCMinutes() + 5)
@@ -86,21 +87,27 @@ export class AuthService {
         userId: user.id
       })
       await this.tokenRepo.save(data)
+      delete data.createdAt
+      delete data.updatedAt
       return data;
     }else{ // neu ton tai token
+      console.log('fuck')
       const time = new Date()
       time.setHours(time.getUTCHours(), time.getUTCMinutes())
       // no expire
       if(data.expiredAt < time){
         const token = Math.random().toString(20).substring(2,12)
         const expiredAt = new Date()
-        expiredAt.setHours(expiredAt.getUTCHours(), expiredAt.getUTCMinutes() + 5)
+        expiredAt.setHours(expiredAt.getUTCHours(), expiredAt.getUTCMinutes() + 1)
         data.token = token
         data.expiredAt = expiredAt
         await this.tokenRepo.save(data)
+        delete data.createdAt
         delete data.updatedAt
         return data
       }else{
+        delete data.createdAt
+      delete data.updatedAt
         return data
       }
     }
@@ -123,6 +130,9 @@ export class AuthService {
     if(check.token !== token){
         throw new ForbiddenException('incorrect token')
     }
+    //check time token
+    //do something ...
+    
     // hash new pass
     const hash = await argon2.hash(newPass);
     user.pass = hash

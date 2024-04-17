@@ -12,6 +12,12 @@
   },
   "moduleNameMapper": {
     "databaseTypeORM/database-typeorm/(.*)": "<rootDir>/../libs/database-typeorm/src/$1",
-    "databaseTypeORM/database-typeorm": "<rootDir>/../libs/database-typeorm/src"
+    "databaseTypeORM/database-typeorm": "<rootDir>/../libs/database-typeorm/src",
+    "@app/demo/demo_lib/(.*)": "<rootDir>/../libs/demo_lib/src/$1",
+    "@app/demo/demo_lib": "<rootDir>/../libs/demo_lib/src",
+    "@app/demo/demo/(.*)": "<rootDir>/../libs/demo/src/$1",
+    "@app/demo/demo": "<rootDir>/../libs/demo/src",
+    "@app/demo_lib1/(.*)": "<rootDir>/../libs/demo_lib1/src/$1",
+    "@app/demo_lib1": "<rootDir>/../libs/demo_lib1/src"
   }
 }

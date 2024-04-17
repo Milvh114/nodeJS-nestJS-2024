@@ -2,31 +2,37 @@ version: '3.8'
 services:
   app:
     build: 
-    networks:
-      - cache-network
-      - db-network
+      context: .
+      dockerfile: Dockerfile
+    environment: #ghi đè
+      - DB_HOST= dev-db-mysql
+      - 
+    # networks:
+    #   - monorepo-network
+
   dev-db-mysql:
     image: mysql
-    env_file:
-      - '.env'
+    restart: always
     ports:
       - '3306:3306'
+    environment:
+      - MYSQL_DATABASE= demo-monorepo
+      - MYSQL_ROOT_PASSWORD=123456
     expose:
       - 3306
-    networks:
-      - db-network
+    # networks:
+    #   - monorepo-network
+
   cache-redis:
     image: redis:alpine
     restart: always
     ports:
       - 6379:6379
-    volumes:
-      - new_redis_data_container:/data
-    networks:
-      - cache-network
-  networks:
-    cache-network:
-      driver: bridge
-    db-network:
-      driver: bridge
+    # volumes:
+    #   - new_redis_data_container:/data
+    # networks:
+    #   - monorepo-network
+  # networks:
+  #   monorepo-network:
+  #     driver: bridge
 

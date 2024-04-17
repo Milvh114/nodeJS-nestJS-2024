@@ -1,4 +1,6 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm"
+import { Post } from "src/post/entity"
+import { Like } from "src/post/entity/like.entity"
+import { Column, CreateDateColumn, Entity, JoinColumn, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm"
 
 
 @Entity()
@@ -27,4 +29,10 @@ export class User {
 
     @UpdateDateColumn({name: 'update_at'})
     updatedAt: Date;
+
+    @OneToMany(() => Post, (post) => post.user)
+    posts: Post[]
+
+    @OneToMany(() => Like, (like) => like.user)
+    likes: Like[]
 }
