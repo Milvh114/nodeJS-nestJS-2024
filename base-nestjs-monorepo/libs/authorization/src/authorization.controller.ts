@@ -161,4 +161,5 @@ export class AuthorizationController {
   async hiddenRole(@Param('roleId', ToIntPipe) roleId: number) {
     return await this.authorizationService.hiddenRole(roleId);
   }
+
 }

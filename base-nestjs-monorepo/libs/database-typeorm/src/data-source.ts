@@ -1,7 +1,7 @@
 import { DataSource } from 'typeorm';
 import AuthorizationMigrations from '../../authorization/src/migrations';
 import { AuthorizationEntities } from '../../authorization/src/entities';
-import DefaultEntities from './entities';
+import { DefaultEntities } from './entities';
 import DefaultMigrations from './migrations';
 import ResourceEntities from '../../resource/src/entities';
 import LanguageEntities from '../../language/src/entities';
@@ -12,7 +12,7 @@ import ConfigMigrations from '../../config/src/migrations';
 import NotificationEntities from '../../notification/src/entities';
 import NotificationMigrations from '../../notification/src/migrations';
 require('dotenv').config();
-console.log(process.env)
+
 export const dataSource = new DataSource({
     type: 'mysql',
     host: process.env.MYSQL_HOST,
@@ -25,19 +25,19 @@ export const dataSource = new DataSource({
     bigNumberStrings: false,
     entities: [
         ...DefaultEntities,
-        ...AuthorizationEntities,
-        ...ResourceEntities,
-        ...LanguageEntities,
-        ...ConfigEntities,
-        ...NotificationEntities,
+        // ...AuthorizationEntities,
+        // ...ResourceEntities,
+        // ...LanguageEntities,
+        // ...ConfigEntities,
+        // ...NotificationEntities,
     ],
     migrations: [
         ...DefaultMigrations,
-        ...AuthorizationMigrations,
-        ...ResourceMigrations,
-        ...LanguageMigrations,
-        ...ConfigMigrations,
-        ...NotificationMigrations,
+        // ...AuthorizationMigrations,
+        // ...ResourceMigrations,
+        // ...LanguageMigrations,
+        // ...ConfigMigrations,
+        // ...NotificationMigrations,
     ],
     subscribers: [],
     synchronize: false,

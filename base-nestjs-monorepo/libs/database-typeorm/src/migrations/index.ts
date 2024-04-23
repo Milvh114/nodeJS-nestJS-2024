@@ -1,4 +1,7 @@
-import { TableUser1667186819977 } from "./1667186819977-TableUser"
+import { CreateUser20240419162325 } from "./20240419162325-create-user"
+import { CreatePost20240419162502 } from "./20240419162502-create-post"
+import { CreateRelation20240419162737 } from "./20240419162737-create-relation"
 
-export const DefaultMigrations = [TableUser1667186819977]
+
+export const DefaultMigrations = [CreateUser20240419162325, CreatePost20240419162502, CreateRelation20240419162737]
 export default  DefaultMigrations

@@ -4,9 +4,12 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Post } from './post.entity';
+import { Like } from './like.entity';
 
 @Entity('user')
 export default class User {
@@ -47,7 +50,6 @@ export default class User {
     name: 'role_id',
     type: 'tinyint',
     unsigned: true,
-    enum: RoleId,
     default: RoleId.USER,
   })
   roleId: number;
@@ -80,4 +82,10 @@ export default class User {
 
   @UpdateDateColumn({ name: 'updated_at', type: 'datetime' })
   updatedAt: string;
+
+  @OneToMany(() => Post, (post) => post.user)
+  posts: Post[]
+
+  // @OneToMany(() => Like, (like) => like.user)
+  // likes: Like[]
 }
