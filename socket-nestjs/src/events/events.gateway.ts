@@ -35,6 +35,7 @@
 
 
 
+import { OnModuleInit } from '@nestjs/common';
 import {
   MessageBody,
   SubscribeMessage,
@@ -48,13 +49,25 @@ import { Server } from 'socket.io';
 
 
 @WebSocketGateway({
-  cors: {
-    origin: '*',
-  },
+  // cors: {
+  //   origin: '*',
+  // },
 })
-export class EventsGateway {
+export class EventsGateway implements OnModuleInit {
+  onModuleInit() {
+    this.server.on('connect', (socket) => {
+      console.log(socket.id)
+      console.log('Connected')
+    })
+  }
   @WebSocketServer()
   server: Server;
+
+  @SubscribeMessage('newMsg')
+  onNewMessage(@MessageBody() body: any){
+    console.log(body)
+    this.server.emit('onMessage', {msg: 'New mess', content: body})
+  }
 
   @SubscribeMessage('events')
   findAll(@MessageBody() data: any): Observable<WsResponse<number>> {
