@@ -1,0 +1,11 @@
+version: '3.7'
+services:
+  redis:
+    image: redis:alpine
+    restart: always
+    ports:
+      - 6379:6379
+    volumes:
+      - new_redis_data_container:/data
+volumes:
+  new_redis_data_container:

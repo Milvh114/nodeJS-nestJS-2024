@@ -1,0 +1,16 @@
+stages:
+  # - Build
+  - DeployDevelop
+
+DeployDevelop:
+  stage: DeployDevelop
+  image: namdd72/amela-node:14-buster-slim
+  only: ['develop']
+  script:
+    # - apt-get update && apt-get install rsync -y && apt-get install openssh-server -y
+    - mkdir -p ~/.ssh
+    - ssh-keyscan -H '13.250.46.167' >> ~/.ssh/known_hosts
+    - echo "$PRIVATE_DEPLOY_KEY_TEST" > ~/.ssh/id_rsa
+    - chmod 700 ~/.ssh/id_rsa
+    - rsync --progress -avzh -e "ssh " --rsync-path="sudo rsync" --exclude='.git' . ubuntu@13.250.46.167:~/run-crew-api
+    - ssh ubuntu@13.250.46.167 "cd ~/run-crew-api && sudo npm install && sudo npm run build && pm2 reload api --update-env && pm2 save"

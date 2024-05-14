@@ -4,6 +4,7 @@ const socket = io({
     }
 });
 
+
 const form = document.getElementById('form');
 const room1 = document.getElementById('room1')
 const room2 = document.getElementById('room2')
@@ -48,7 +49,7 @@ room2.addEventListener('click', function() {
     room2.hidden=true
     room0.hidden=true
 });
-socket.on('some event', (msg, serverOffset, room) => {
+socket.on('load-data', (msg, serverOffset, room) => {
     const item = document.createElement('li');
     item.textContent = msg;
     messages.appendChild(item);
@@ -79,3 +80,8 @@ leaveRoom.addEventListener('click', ()=>{
 socket.on('error', (msg) => {
     roomTitle.textContent = 'Pls select room'
 })
+socket.on('clear-messages', async (selectRoom) => {
+    await socket.emit('load-data',selectRoom)
+})
+
+socket.on(leaveRoom)

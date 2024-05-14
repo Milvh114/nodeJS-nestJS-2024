@@ -1,10 +1,11 @@
-import { NestFactory } from '@nestjs/core';
+
 import { AppModule } from './app.module';
 // import { Server } from "socket.io";
 import express from 'express';
 import { createServer } from 'node:http';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
+import { NestFactory } from 'node_modules/@nestjs/core/nest-factory';
 
 const app = express();
 const server = createServer(app);
@@ -18,8 +19,6 @@ app.get('/', (req, res) => {
 
 async function bootstrap() {
   
-  
-
   const app = await NestFactory.create(AppModule);
   await app.listen(3000);
 }

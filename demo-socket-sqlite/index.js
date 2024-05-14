@@ -62,19 +62,6 @@ async function main() {
       }
       // include the offset with the message
       socket.emit('some event', msg, result.lastID, room);
-      // if (!socket.recovered) {
-      //   // if the connection state recovery was not successful
-      //   try {
-      //     await db.each('SELECT id, content FROM messages WHERE id > ? AND room = ?',
-      //       [socket.handshake.auth.serverOffset || 0, room],
-      //       (_err, row) => {
-      //         socket.emit('some event', row.content, row.id, row.room);
-      //       }
-      //     )
-      //   } catch (e) {
-      //     // something went wrong
-      //   }
-      // }
     })
 
     
@@ -98,9 +85,8 @@ main()
 //   }
 //   // include the offset with the message
 //   socket.in(room).emit('some event', msg, result.lastID, room);
-  
 // });
-// if (!socket.recovered) {
+// if (!socket.recovered) { // mỗi lần reset lại page thì nó render ra data này 
 //   // if the connection state recovery was not successful
 //   try {
 //     await db.each('SELECT id, content FROM messages WHERE id > ? AND room = ?',

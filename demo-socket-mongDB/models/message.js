@@ -1,13 +1,14 @@
+// import mongoose from 'mongoose';
 const mongoose = require("mongoose")
 
 const msgSchema = new mongoose.Schema({
     content:{
         type: String,
-        require: true
+        require: [true, "pls enter content"]
     },
     room:{
         type: String,
-        require: true,
+        require: true
         // lowercase: true,
     }
     // createdAt: {
@@ -17,7 +18,8 @@ const msgSchema = new mongoose.Schema({
     // },
     // updatedAt: Date,
 }, {
-    versionKey: false // Tắt việc sử dụng phiên bản
+    versionKey: false, // Tắt việc sử dụng phiên bản
+    timestamps: true
 })
 
 const Msg = mongoose.model('messages', msgSchema)
