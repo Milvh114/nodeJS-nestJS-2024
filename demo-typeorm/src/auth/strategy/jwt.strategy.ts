@@ -23,7 +23,7 @@ export class JwtStrategy extends PassportStrategy(
             secretOrKey: config.get('JWT_SECRET')
         })
     }
-
+    // passport giúp ta tự verifyAsync() token cho chúng ta
     async validate(payload: {sub: number, email: string}){ // this function will transformed token into that object and put into payload
         const user = await this.userRepo.findOne({
             where:{
@@ -31,6 +31,7 @@ export class JwtStrategy extends PassportStrategy(
             }
         })
         delete user.password
-        return  user
+        return user
     }
+
 }

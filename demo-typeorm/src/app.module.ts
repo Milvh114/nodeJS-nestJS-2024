@@ -7,6 +7,8 @@ import { PostModule } from './post/post.module';
 import { CommentService } from './comment/comment.service';
 import { CommentModule } from './comment/comment.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { APP_GUARD } from '@nestjs/core';
+import { RolesGuard } from './auth/guard/roles.guard';
 
 
 @Module({
@@ -21,6 +23,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
     CommentModule,
   ],
   // controllers: [],
-  // providers: [],
+  providers: [
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: RolesGuard,
+    // },
+  ],
 })
 export class AppModule {}

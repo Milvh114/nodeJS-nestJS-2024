@@ -157,18 +157,29 @@ export class AuthService {
     await this.entityManager.save(user)
     return this.userService.entityToAuthDto(user);
   }
+  // //cách làm có cài đặt option cho jwt
+  // async signToken(userId:number, email: string): Promise<{access_token: string}> {
+  //   const payload = {
+  //     sub: userId, 
+  //     email
+  //   }
+  //   const secret = await this.config.get('JWT_SECRET')
+  //   const token = await this.jwt.signAsync(payload, { 
+  //     expiresIn: '120m', 
+  //     secret: secret
+  //   })
+  //   return { access_token: token}
+  // }
 
+  //cách làm không có cài đặt option cho jwt
   async signToken(userId:number, email: string): Promise<{access_token: string}> {
     const payload = {
       sub: userId, 
       email
     }
-    const secret = await this.config.get('JWT_SECRET')
-    const token = await this.jwt.signAsync(payload, { 
-      expiresIn: '60m', 
-      secret: secret
-    })
-    return { access_token: token}
+    const token = await this.jwt.signAsync(payload)
+    this.jwt.
+    return { access_token: token }
   }
 
 

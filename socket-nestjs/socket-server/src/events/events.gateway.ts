@@ -26,7 +26,7 @@ export class EventsGateway implements OnModuleInit {
   @WebSocketServer()
   server: Server;
 
-  @SubscribeMessage('newMsg')
+  @SubscribeMessage('newMessage')
   onNewMessage(@MessageBody() body: any){
     console.log(body)
     this.server.emit('onMessage', {msg: 'New mess', content: body})

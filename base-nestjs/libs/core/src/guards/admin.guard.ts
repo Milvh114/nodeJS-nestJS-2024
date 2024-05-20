@@ -18,7 +18,7 @@ export class AdminGuard implements CanActivate {
     if (isPublic) return true;
 
     const user = context?.switchToHttp().getRequest().payload;
-
+    
     return [UserType.SUPER_ADMIN, UserType.ADMIN].includes(
       user.userType as any,
     );
