@@ -2,7 +2,7 @@ EMAIL_HANDLE_SSH="tvhien2000az@gmail.com"
 
 # mysql
 DB_USER="admin"
-DB_PASSWORD="0Azmothaibabon"
+DB_PASSWORD=""
 DB_NAME="task_manager"
 
 # nginx
